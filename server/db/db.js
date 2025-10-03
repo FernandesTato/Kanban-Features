@@ -12,29 +12,5 @@ const connectingToMongoDb = async () => {
     }
 }
 
-const groupSchema = new mongoose.Schema({
-  userIds: [Number],
-  name: String,
-  password: String,
-  card: [cardSchema],
-  adminUserId: Number,
-})
 
-const cardSchema = new mongoose.Schema({
-  title: String,
-  text: String, 
-  Date: Date,
-  groupId: Number
-})
-
-const userSchema = new mongoose.Schema({
-    name: String,
-    password: String,
-    groupIds: [Number],
-    groupIdAdmin: Number
-}) 
-
-const groupModel = mongoose.model("Group", groupSchema)
-const userModel = mongoose.model("User", userSchema)
-
-module.exports = {usersModel, groupModel,  connectingToMongoDb}
+module.exports = connectingToMongoDb 

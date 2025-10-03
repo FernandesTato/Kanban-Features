@@ -1,4 +1,4 @@
-const { groupModel, userModel } = require("../db/db.js")
+const { groupModel,  userModel, carModel } = require("../db/schema.js")
 
 const postCards = async (req, res) => {
   try{
