@@ -4,24 +4,25 @@ const groupSchema = new mongoose.Schema({
   userIds: [Number],
   name: String,
   password: String,
-  card: [{ mongoose.Schema.Types.ObjectId, ref:"Card"}],  
+  card: [ { mongoose.Schema.Types.ObjectId, ref:"Card"} ]
 })
 
 const cardSchema = new mongoose.Schema({
   title: String,
   text: String,
-  Date: Date,
+  date: Date,
+  state: String,
+  groupId: { type: mongoose.Schema.Types.ObjectId, ref: "Group"}
 })
 
 const userSchema = new mongoose.Schema({
     name: String,
     password: String,
-    groupIds: [Number],
-}) 
+    groupIds: [ { types:mongoose.Schema.Types.ObjectId, ref:"Group"}]
+})
 
 const groupModel = mongoose.model("Group", groupSchema)
 const userModel = mongoose.model("User", userSchema)
 const cardModel = mongoose.model("Card", cardModel)
 
 module.exports = { groupModel, userModel, cardModel}
-
