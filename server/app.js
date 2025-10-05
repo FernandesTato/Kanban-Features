@@ -2,10 +2,11 @@ const express = require("express");
 const router = require("./router/router.js")
 const app = express()
 const connectingToMongoDb = require("./db/db.js")
+const cookieParser = require("cookie-parser")
 
 app.use(express.json())
 app.use(router)
-app.use(express.cookieParser())
+app.use(cookieParser())
 
 const start = async () => {
   try{
