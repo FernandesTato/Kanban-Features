@@ -5,6 +5,7 @@ const connectingToMongoDb = require("./db/db.js")
 
 app.use(express.json())
 app.use(router)
+app.use(express.cookieParser())
 
 const start = async () => {
   try{
