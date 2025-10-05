@@ -1,18 +1,21 @@
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
-const middlewareJwt = (req, res, next) => {
-  try{
-    const cookieJwt = req.cookies.token
-    if(cookieJwt == undefined){
-      
-
-    }
-  } catch(err){
-    console.error("error em middlewareJwt: ", err)
-    res.status(500).json({ error:err.message })
+const middlewareJwtAuth = (req, res, next) => {
+  const token = req.cookies.jwt
+  if(token){
+    jwt.verify(token, process.env.SECRE_KEY, (err, decodedToken) => {
+      if(err){
+        console.error(err.message)
+        res.redirect('/login/user')
+      } else {
+        console.log(decodedToken)
+        next()
+      }
+    })      
+  } else {
+    res.redirect("/login/user")
   }
-  next()
 }
 
-module.exports = middlewarJwt 
+module.exports = middlewareJwtAuth
