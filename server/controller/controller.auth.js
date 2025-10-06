@@ -17,11 +17,13 @@ const encrypting = async (pwd) => {
 }
 const saveOnDb = async (username, pwd, model, userId) => {
   const cryptedPwd = await encrypting(pwd)
+
   if(!userId){
     const doc = new model({
       name: username,
       password: cryptedPwd
     })
+
     await doc.save()
     return doc
   } else {
@@ -30,18 +32,22 @@ const saveOnDb = async (username, pwd, model, userId) => {
       name: username,
       password: cryptedPwd      
     })
+
     await doc.save()
     return doc
   }
 }
 const userSignup = async (req, res) => {
   const { username, pwd } = req.body
+
   if(!username || !pwd){
     return res.status(400).json({ error:"invalid"})  
   }
+
 	try{
-    await saveOnDb(username, pwd, userModel)
+    const user = await saveOnDb(username, pwd, userModel)
     const jwtToken = createToken(user._id)
+
     res.cookie('jwt', token, { httpOnly: true, maxAge:maxAge})
     res.status(201).json({ user: user._id })
 	} catch(err){
@@ -52,12 +58,15 @@ const userSignup = async (req, res) => {
 const groupSignup = async (req, res) => {
   const { groupName, pwd } = req.body
   const tokenId = req.user.id
+  
   if(!groupName || !pwd){
     return res.status(400).json({ error:"name or passoword is invalid"})
   }
+
   if(!tokenId){
     return res.status(401).json({ error:"No token provided"})
   } 
+
   try{
     const userId = await userModel.findById(tokenId)
     await saveOnDb(groupName, pwd, groupModel, userId)
