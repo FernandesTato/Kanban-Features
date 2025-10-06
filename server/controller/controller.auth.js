@@ -72,7 +72,7 @@ const groupSignup = async (req, res) => {
     await saveOnDb(groupName, pwd, groupModel, userId)
   } catch(err){
     console.error(err)
-    res.status(400).json(Error: err)
+    res.status(400).json( { error: err })
   }
 }
 

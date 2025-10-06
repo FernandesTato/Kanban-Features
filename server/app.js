@@ -10,7 +10,7 @@ app.use(cookieParser())
 
 const start = async () => {
   try{
-    await mongoDb.connectingToMongoDb()
+    await connectingToMongoDb()
     app.listen(3000, () => {
       console.log("server running")
     })

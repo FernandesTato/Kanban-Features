@@ -1,10 +1,10 @@
 const mongoose = require("mongoose")
 
 const groupSchema = new mongoose.Schema({
-  userIds: [Number],
+  userIds: [{ type: mongoose.Schema.Types.ObjectId, ref:"User"}],
   name: String,
   password: String,
-  card: [ { mongoose.Schema.Types.ObjectId, ref:"Card"} ]
+  card: [ { type: mongoose.Schema.Types.ObjectId, ref:"Card"} ]
 })
 
 const cardSchema = new mongoose.Schema({
@@ -18,11 +18,11 @@ const cardSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
     name: String,
     password: String,
-    groupIds: [ { types:mongoose.Schema.Types.ObjectId, ref:"Group"}]
+    groupIds: [ { type: mongoose.Schema.Types.ObjectId, ref:"Group"}]
 })
 
 const groupModel = mongoose.model("Group", groupSchema)
 const userModel = mongoose.model("User", userSchema)
-const cardModel = mongoose.model("Card", cardModel)
+const cardModel = mongoose.model("Card", cardSchema)
 
 module.exports = { groupModel, userModel, cardModel}
