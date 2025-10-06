@@ -15,6 +15,7 @@ const encrypting = async (pwd) => {
   const cryptedPwd = await bcrypt.hash(pwd, salt)
   return cryptedPwd
 }
+
 const saveOnDb = async (username, pwd, model, userId) => {
   const cryptedPwd = await encrypting(pwd)
   if(!userId){
@@ -28,10 +29,8 @@ const saveOnDb = async (username, pwd, model, userId) => {
       name: username,
       password: cryptedPwd      
     })
-
   }
-  doc.save()
-  return doc
+  await doc.save()
 }
 
 const userSignup = async (req, res) => {
@@ -54,15 +53,12 @@ const userSignup = async (req, res) => {
 const groupSignup = async (req, res) => {
   const { groupName, pwd } = req.body
   const tokenId = req.user
-
   if(!groupName || !pwd){
     return res.status(400).json({ error:"name or passoword is invalid"})
   }
-
   if(!tokenId){
     return res.status(401).json({ error:"No token provided"})
-  }
- 
+  } 
   try{
     const group = await saveOnDb(groupName, pwd, groupModel, tokenId)
   } catch(err){
