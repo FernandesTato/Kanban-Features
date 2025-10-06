@@ -15,7 +15,6 @@ const encrypting = async (pwd) => {
   const cryptedPwd = await bcrypt.hash(pwd, salt)
   return cryptedPwd
 }
-
 const saveOnDb = async (username, pwd, model, userId) => {
   const cryptedPwd = await encrypting(pwd)
   if(!userId){
@@ -23,23 +22,25 @@ const saveOnDb = async (username, pwd, model, userId) => {
       name: username,
       password: cryptedPwd
     })
+    await doc.save()
+    return doc
   } else {
     const doc = new model({
-      userId: [userId]
+      userId: [userId],
       name: username,
       password: cryptedPwd      
     })
+    await doc.save()
+    return doc
   }
-  await doc.save()
 }
-
 const userSignup = async (req, res) => {
   const { username, pwd } = req.body
   if(!username || !pwd){
     return res.status(400).json({ error:"invalid"})  
   }
 	try{
-    const user = await saveOnDb(username, pwd, userModel)
+    await saveOnDb(username, pwd, userModel)
     const jwtToken = createToken(user._id)
     res.cookie('jwt', token, { httpOnly: true, maxAge:maxAge})
     res.status(201).json({ user: user._id })
@@ -47,12 +48,10 @@ const userSignup = async (req, res) => {
     console.error(`Error: ${err}`) //It is needed to make some methods on db schema to throw error which we can read and laed with it in a handle error function
     return res.status(400).json({ error: err})
 	}
-	res.status(200).json({ message:"sigup was completed succesfully"})
 }
-
 const groupSignup = async (req, res) => {
   const { groupName, pwd } = req.body
-  const tokenId = req.user
+  const tokenId = req.user.id
   if(!groupName || !pwd){
     return res.status(400).json({ error:"name or passoword is invalid"})
   }
@@ -60,7 +59,8 @@ const groupSignup = async (req, res) => {
     return res.status(401).json({ error:"No token provided"})
   } 
   try{
-    const group = await saveOnDb(groupName, pwd, groupModel, tokenId)
+    const userId = await userModel.findById(tokenId)
+    await saveOnDb(groupName, pwd, groupModel, userId)
   } catch(err){
     console.error(err)
     res.status(400).json(Error: err)
