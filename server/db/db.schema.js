@@ -1,9 +1,10 @@
 const mongoose = require("mongoose")
 
 const groupSchema = new mongoose.Schema({
-  userIds: [{ type: mongoose.Schema.Types.ObjectId, ref:"User"}],
   name: String,
   password: String,
+  userIdAdmin: [{ type: mongoose.schema.types.objectid, ref:"user"}],
+  userId: [{ type: mongoose.schema.types.objectid, ref:"user"}],
   card: [ { type: mongoose.Schema.Types.ObjectId, ref:"Card"} ]
 })
 

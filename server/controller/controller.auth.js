@@ -1,6 +1,7 @@
 require("dotenv").config()
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
+const mongoose = require("mongoose")
 const { groupModel, userModel } = require("../db/db.schema.js")
 
 const maxAge = 1 //just a random number for while
@@ -28,9 +29,10 @@ const saveOnDb = async (username, pwd, model, userId) => {
     return doc
   } else {
     const doc = new model({
-      userId: [userId],
       name: username,
       password: cryptedPwd      
+      userIdAdmin: [userId],
+      userId: [userId]
     })
 
     await doc.save()
@@ -48,7 +50,7 @@ const userSignup = async (req, res) => {
     const user = await saveOnDb(username, pwd, userModel)
     const jwtToken = createToken(user._id)
 
-    res.cookie('jwt', token, { httpOnly: true, maxAge:maxAge})
+    res.cookie('jwtUser', jwtToken, { httpOnly: true, maxAge:maxAge})
     res.status(201).json({ user: user._id })
 	} catch(err){
     console.error(`Error: ${err}`) //It is needed to make some methods on db schema to throw error which we can read and laed with it in a handle error function
@@ -57,7 +59,7 @@ const userSignup = async (req, res) => {
 }
 const groupSignup = async (req, res) => {
   const { groupName, pwd } = req.body
-  const tokenId = req.user.id
+  const tokenId = req.user.userid
   
   if(!groupName || !pwd){
     return res.status(400).json({ error:"name or passoword is invalid"})
@@ -69,7 +71,17 @@ const groupSignup = async (req, res) => {
 
   try{
     const userId = await userModel.findById(tokenId)
-    await saveOnDb(groupName, pwd, groupModel, userId)
+
+    if(mongoose.Types.ObjectId.isValid(userId)){
+      throw new Error("Id nao encontrado")
+      return
+    }
+
+    const group = await saveOnDb(groupName, pwd, groupModel, userId)
+
+    const jwtToken = createToken(group._id)
+    res.cookie("jwtGroup", jwtToken, {httpOnly: true, maxAge:maxAge})
+    res.status(201).json({ group: group._id})
   } catch(err){
     console.error(err)
     res.status(400).json( { error: err })
