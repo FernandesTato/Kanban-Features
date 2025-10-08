@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 
 const groupSchema = new mongoose.Schema({
   name: String,
-  password: String,
+  password: {type: String, required: true, select: false},
   userIdAdmin: [{ type: mongoose.schema.types.objectid, ref:"user"}],
   userId: [{ type: mongoose.schema.types.objectid, ref:"user"}],
   cardId: [ { type: mongoose.Schema.Types.ObjectId, ref:"Card"} ]
@@ -17,9 +17,9 @@ const cardSchema = new mongoose.Schema({
 })
 
 const userSchema = new mongoose.Schema({
-    name: String,
-    password: String,
-    groupIds: [ { type: mongoose.Schema.Types.ObjectId, ref:"Group"}]
+  name: String,
+  password: {type: String, required: true, select: false},     
+  groupIds: [ { type: mongoose.Schema.Types.ObjectId, ref:"Group"}]
 })
 
 const groupModel = mongoose.model("Group", groupSchema)
