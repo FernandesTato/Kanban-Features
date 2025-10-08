@@ -40,7 +40,7 @@ const userIdExistInGroup = async (req, res, next) => {
       return res.status(404).json({ error: 'Grupo não encontrado ou usuário não é membro' });
     }
 
-    req.user.id = userDoc._id.toString()
+    req.user.id = String(userDoc._id)    
     req.group = groupDoc
     return next()
   } catch(err){
