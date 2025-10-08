@@ -5,7 +5,7 @@ const groupSchema = new mongoose.Schema({
   password: String,
   userIdAdmin: [{ type: mongoose.schema.types.objectid, ref:"user"}],
   userId: [{ type: mongoose.schema.types.objectid, ref:"user"}],
-  card: [ { type: mongoose.Schema.Types.ObjectId, ref:"Card"} ]
+  cardId: [ { type: mongoose.Schema.Types.ObjectId, ref:"Card"} ]
 })
 
 const cardSchema = new mongoose.Schema({

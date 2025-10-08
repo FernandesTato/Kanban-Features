@@ -35,11 +35,12 @@ const saveOnDb = async (username, pwd, model, userId) => {
       userId: [userId]
     })
 
-    await doc.save()
-    return doc
+    const docSalved = await doc.save()
+    return docSalved;
   }
 }
-const userSignup = async (req, res) => {
+
+const userSignup = async (req, res) => { //POST
   const { username, pwd } = req.body
 
   if(!username || !pwd){
@@ -57,7 +58,8 @@ const userSignup = async (req, res) => {
     return res.status(400).json({ error: err})
 	}
 }
-const groupSignup = async (req, res) => {
+
+const groupSignup = async (req, res) => { //POST
   const { groupName, pwd } = req.body
   const tokenId = req.user.userid
   

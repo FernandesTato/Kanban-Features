@@ -35,4 +35,5 @@ const middlewareGroupJwt = (req, res, next) => {
     res.status().redirect("/")
   }
 }
+
 module.exports = middlewareJwtAuth, middlewareGroupJwt
