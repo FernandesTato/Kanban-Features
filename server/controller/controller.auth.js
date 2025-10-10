@@ -36,13 +36,12 @@ const saveOnDb = async (username, pwd, model, userId) => {
     }
 
   } catch(err){
-    console.error("error: ", err.message)
+    return console.error("error: ", err.message)
   }
 }
 
 const userSignup = async (req, res) => { //POST
   const { username, pwd } = req.body
-
   if(!username || !pwd){
     return res.status(400).json({ error:"invalid"})  
   }
@@ -139,4 +138,4 @@ const groupSigIn = async (req, res) => {
 
 
 
-module.exports = { userSignup, groupSignup }
+module.exports = { userSignup, groupSignup, userSigIn, groupSigIn}

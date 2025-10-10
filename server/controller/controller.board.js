@@ -59,3 +59,5 @@ const updatingCard = (req, res) => { //PATCH ou PUT?
     res.status(400).jso({ error: err.message })
   }
 }
+
+module.exports = { createCard, updatingCard}

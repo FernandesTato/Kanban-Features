@@ -1,7 +1,5 @@
 const { groupModel, userModel } = require("../db/db.schema.js") 
 const mongoose = require(mongoose)
-//alterar nome do arquivo e como pega o groupId, melhor pegar via url q será enviada pelo frontend
-//fazer /listme e assim ter todos os dados disponiveis para o usuario(menos senha e username obvio)
 
 const listUser = async(req, res) => {
   const userId = req.user.userId
@@ -19,3 +17,5 @@ const listUser = async(req, res) => {
     res.status(400).json({ error: err.message})
   }
 }
+
+module.exports = listUser
