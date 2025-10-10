@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser")
 app.use(express.json())
 app.use(router)
 app.use(cookieParser())
+app.user(helmet())
 
 const start = async () => {
   try{
