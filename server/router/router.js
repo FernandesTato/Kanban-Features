@@ -11,9 +11,9 @@ router.post("/signup/user", userSignup)
 router.post("/signup/group", middlewareJwtAuth, groupSignup)
 router.post("/login/user", userSigIn)
 router.post("/login/gruop", middlewareJwtAuth, groupSigIn)
-router.post("/board/createCard", middlewareJwtAuth, userIdExistInGroup, createCard)
+router.post("/board/:id/createCard", middlewareJwtAuth, userIdExistInGroup, createCard)
 
-router.patch("/board/updateCard", middlewareJwtAuth, userIdExistInGroup, updatingCard)
+router.patch("/board/:id/updateCard", middlewareJwtAuth, userIdExistInGroup, updatingCard)
 
 router.get("/user", middlewareJwtAuth, listUser)
 

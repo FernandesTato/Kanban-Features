@@ -1,43 +1,49 @@
+require("dotenv").config()
 const jwt = require("jsonwebtoken")
 const mongoose = require("mongoose")
 const { groupModel, userModel } = require("../db/db.schema.js")
 
-
-require("dotenv").config()
+const COOKIE_NAME = "jwt"
+const JWT_SECRET = process.env.SECRET_KEY
 
 const middlewareJwtAuth = (req, res, next) => {
-  const token = req.cookies?.jwtUser
-  if(!token) return res.status(401).redirect("/login/user")
+  const token = req.cookies?.[COOKIE_NAME]
+  if(!token) {  
+    return res.status(401).redirect("/login/user")
+  }
   try{
-    const payload = jwt.verify(token, process.env.SECRET_KEY)
+    const payload = jwt.verify(token, JWT_SECRET)
     req.user = req.user || {}
-    req.user.id = payload.id//Is needed add role camp
+    req.user.id = String(payload.id)
     return next()
   }catch(err){
     console.error("JWT verify failed:", err.message)
-    res.status(401).redirect("/login/user")
+    return res.status(401).redirect("/login/user")
   }
 }
+
 const userIdExistInGroup = async (req, res, next) => {
   const userId = req.user?.id
   const groupId = req.params.id
 
-  if(!mongoose.Types.ObjectId.isValid(userId)) {
+  if(!groupId || !userId) {
+    return res.status(400).json({ error: "group of id is missing"})
+  }
+  if(!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(groupId)) {
     return res.status(400).json({ error: "Invalid Id"})
   }
-  if(!groupId || !userId) {
-    return res.status(400).json({ error: "group of id not passed"})
-  }
   try{
-    const groupPromise = groupModel.findOne({userId: userId}).lean()
-    const userPromise = userModel.findById({_id: userId}).lean()    
-    const [groupDoc, userDoc] = await Promise.all([groupPromise, userPromise]) 
-
+    const userDoc = await userModel.findById(userId).select('_id').lean()
     if (!userDoc) {
       return res.status(401).json({ error: 'Usuário não encontrado' });
     }
-    if (!groupDoc) {
-      return res.status(404).json({ error: 'Grupo não encontrado ou usuário não é membro' });
+    const groupDoc = await groupModel
+      .findOne({_id: groupId, userId: mongoose.Types.ObjectId(userId) })
+      .select("_id name userId userIdAdmin")
+      .lean()
+
+    if(!groupDoc){
+      return res.status(403).json({ error: "User is not a member"})
     }
 
     req.user.id = String(userDoc._id)    
@@ -45,7 +51,7 @@ const userIdExistInGroup = async (req, res, next) => {
     return next()
   } catch(err){
     console.error("error: ", err.message)
-    res.redirect("/")
+    return res.status(500).redirect("/")
   }
 }
 

@@ -43,7 +43,7 @@ const updatingCard = (req, res) => { //PATCH ou PUT?
   const cardUpdate = req.body
   try { 
     if(!mongoose.Types.ObjectId.isValid(cardUpdate.id) || !cardModel.findById(cardUpdate.id)){
-        throw new Error("card dont exist")
+        throw new Error("card don't exist")
     }
     const set = {}
 
